@@ -3,7 +3,7 @@ version: '3.8'
 services:
   web:
     build: .
-    container_name: trading-web
+    container_name: shop-web
     env_file: .env
     command: python /usr/src/shop/src/manage.py runserver 0.0.0.0:8000
     volumes:

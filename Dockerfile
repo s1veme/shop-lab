@@ -13,6 +13,6 @@ RUN pip install --upgrade pip && pip install poetry
 COPY ./poetry.lock ./pyproject.toml ./
 RUN poetry config virtualenvs.create false && poetry install
 COPY docker-entrypoint.sh /docker-entrypoint.sh
-RUN chmod +x /usr/src/trading_floor/docker-entrypoint.sh
+RUN chmod +x /usr/src/shop/docker-entrypoint.sh
 
 ENTRYPOINT ["/usr/src/shop/docker-entrypoint.sh"]
