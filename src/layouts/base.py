@@ -12,10 +12,6 @@ class BaseWindow:
         logo_label.setPixmap(QPixmap("путь_к_вашему_логотипу.png"))
         header_layout.addWidget(logo_label)
 
-        products_button = QLabel("<a href=\"#\">Все товары</a>")
-        products_button.setOpenExternalLinks(True)
-        header_layout.addWidget(products_button)
-
         logout_button = QPushButton("Выход")
         logout_button.clicked.connect(logout_method)
         logout_button.setMaximumWidth(100)
