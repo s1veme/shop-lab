@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    container_name: trading-web
+    env_file: .env
+    command: python /usr/src/shop/src/manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/usr/src/shop
+    ports:
+      - "8000:8000"
+
