@@ -3,8 +3,8 @@ from typing import Callable
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QMainWindow,
+    QStackedLayout,
     QVBoxLayout,
-    QHBoxLayout,
     QLabel,
     QPushButton,
     QGridLayout,
@@ -13,7 +13,9 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtGui import QPixmap
 
+from core.settings import HEIGHT, WIDTH
 from layouts.base import BaseWindow
+from layouts.order import OrderWindow
 from layouts.product import ProductDetailWindow
 from mocks.products import MOCK_PRODUCTS_DATA
 from models.product import Product
@@ -26,9 +28,11 @@ class ProductCard(QWidget):
         self,
         product: Product,
         on_clicked: Callable,
+        stacked_layout: QStackedLayout,
     ):
         super().__init__()
         self.product = product
+        self.stacked_layout = stacked_layout
 
         layout = QVBoxLayout()
 
@@ -47,7 +51,8 @@ class ProductCard(QWidget):
         image_label.setPixmap(QPixmap(product.image))
         layout.addWidget(image_label)
 
-        buy_button = QPushButton("Купить")
+        buy_button = QPushButton('Купить')
+        buy_button.clicked.connect(self.create_order)
         layout.addWidget(buy_button)
 
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
@@ -56,13 +61,21 @@ class ProductCard(QWidget):
         self.setStyleSheet("margin: 5px; padding: 10px; background-color: #000; border-radius: 20%;")
         self.setLayout(layout)
 
+    def create_order(self, event):
+        print(type(event))
+        order_window = OrderWindow(self.product)
+        self.stacked_layout.addWidget(order_window)
+        self.stacked_layout.setCurrentWidget(order_window)
+
 
 class ProductCatalogWindow(QMainWindow, BaseWindow):
-    def __init__(self):
+    def __init__(self, stacked_layout: QStackedLayout):
         super().__init__()
 
-        self.setWindowTitle("Каталог товаров")
-        self.setGeometry(100, 100, 1366, 768)
+        self.setWindowTitle('Каталог товаров')
+        self.setGeometry(100, 100, WIDTH, HEIGHT)
+
+        self.stacked_layout = stacked_layout
 
         self.init_ui()
 
@@ -71,7 +84,6 @@ class ProductCatalogWindow(QMainWindow, BaseWindow):
 
         self.main_layout.addLayout(self.init_header(self.logout))
 
-        # Каталог товаров
         self.scroll_area = QScrollArea()
         self.scroll_area_widget = QWidget()
         self.catalog_layout = QGridLayout(self.scroll_area_widget)
@@ -99,17 +111,15 @@ class ProductCatalogWindow(QMainWindow, BaseWindow):
             product_card = ProductCard(
                 card,
                 lambda event: self.on_product_clicked(event, card),
+                self.stacked_layout,
             )
             row, col = divmod(i, 4)
             self.catalog_layout.addWidget(product_card, row, col)
 
     def on_product_clicked(self, event, product):
-        detail_widget = ProductDetailWindow(product)
-        self.main_layout.addWidget(detail_widget)
-
-        back_button = QPushButton("Назад")
-        back_button.clicked.connect(self.populate_catalog)
-        self.main_layout.addWidget(back_button)
+        detail_window = ProductDetailWindow(product, self.stacked_layout)
+        self.stacked_layout.addWidget(detail_window)
+        self.stacked_layout.setCurrentWidget(detail_window)
 
     def logout(self):
         # TODO: Добавить логику выхода из профиля.

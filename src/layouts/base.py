@@ -24,4 +24,6 @@ class BaseWindow:
         return header_layout
 
     def init_footer(self) -> QHBoxLayout:
-        ...
+        footer_layout = QHBoxLayout()
+
+        return footer_layout

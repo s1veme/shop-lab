@@ -23,14 +23,12 @@ class LoginWindow(QWidget):
 
         form_layout = QFormLayout()
 
-        # Поле ввода для почты
         email_edit = QLineEdit(self)
         email_edit.setPlaceholderText("Почта")
         email_edit.setStyleSheet("color: white; font-size: 18px;")
         email_edit.setMaximumWidth(500)
         form_layout.addRow(email_edit)
 
-        # Поле ввода для пароля
         password_edit = QLineEdit(self)
         password_edit.setPlaceholderText("Пароль")
         password_edit.setEchoMode(QLineEdit.EchoMode.Password)
@@ -38,7 +36,6 @@ class LoginWindow(QWidget):
         password_edit.setMaximumWidth(500)
         form_layout.addRow(password_edit)
 
-        # Кнопка "Войти"
         login_button = QPushButton("Войти", self)
         login_button.clicked.connect(self.login)
         login_button.setStyleSheet("font-size: 18px; margin-top: 20px;")
@@ -50,7 +47,6 @@ class LoginWindow(QWidget):
 
         layout.addLayout(form_layout)
 
-        # Выравниваем по вертикали
         h_box_layout = QHBoxLayout()
         h_box_layout.addStretch()
         h_box_layout.addLayout(layout)
