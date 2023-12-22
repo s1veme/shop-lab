@@ -21,6 +21,7 @@ from layouts.order import OrderWindow
 from layouts.product import ProductDetailWindow
 from models.product import Product
 
+
 logger = logging.getLogger(__name__)
 
 

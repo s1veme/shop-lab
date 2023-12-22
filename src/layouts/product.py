@@ -71,4 +71,4 @@ class ProductDetailWindow(QMainWindow, BaseWindow):
         self.setCentralWidget(central_widget)
 
     def return_to_catalog(self):
-        self.stacked_layout.setCurrentIndex(0)
+        self.stacked_layout.setCurrentIndex(1)
