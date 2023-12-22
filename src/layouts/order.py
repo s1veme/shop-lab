@@ -1,17 +1,21 @@
-from PyQt6.QtWidgets import QGridLayout, QLabel, QLineEdit, QMainWindow, QMessageBox, QPushButton, QVBoxLayout, QWidget
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QFormLayout, QGridLayout, QHBoxLayout, QLabel, QLineEdit, QMainWindow, QMessageBox, \
+    QPushButton, \
+    QVBoxLayout, QWidget
 
 from core.settings import HEIGHT, WIDTH
 from models.product import Product
 
 
 class OrderWindow(QMainWindow):
-    def __init__(self, product: Product):
+    def __init__(self, product: Product, stacked_layout: QVBoxLayout):
         super().__init__()
 
         self.setWindowTitle('Оформление заказа')
         self.setGeometry(100, 100, WIDTH, HEIGHT)
 
         self.product = product
+        self.stacked_layout = stacked_layout
 
         self.init_ui()
 
@@ -19,34 +23,48 @@ class OrderWindow(QMainWindow):
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
 
-        main_layout = QVBoxLayout()
+        layout = QVBoxLayout()
 
-        grid_layout = QGridLayout()
+        form_layout = QFormLayout()
 
-        fio_label = QLabel('Введите ФИО:')
-        self.fio_input = QLineEdit(self)
-        grid_layout.addWidget(fio_label, 0, 0)
-        grid_layout.addWidget(self.fio_input, 0, 1)
+        fio_input = QLineEdit(self)
+        fio_input.setPlaceholderText("Введите ФИО")
+        fio_input.setStyleSheet("font-size: 18px; margin-top: 10px; color: #fff;")
+        fio_input.setMaximumWidth(200)
+        self.fio_input = fio_input
+        form_layout.addRow(fio_input)
 
-        email_label = QLabel('Введите почту:')
-        self.email_input = QLineEdit(self)
-        grid_layout.addWidget(email_label, 1, 0)
-        grid_layout.addWidget(self.email_input, 1, 1)
+        email_input = QLineEdit(self)
+        email_input.setPlaceholderText("Введите почту")
+        email_input.setStyleSheet("font-size: 18px; margin-top: 10px; color: #fff;")
+        email_input.setMaximumWidth(200)
+        self.email_input = email_input
+        form_layout.addRow(email_input)
 
-        address_label = QLabel('Введите адрес доставки:')
-        self.address_input = QLineEdit(self)
-        grid_layout.addWidget(address_label, 2, 0)
-        grid_layout.addWidget(self.address_input, 2, 1)
+        address_input = QLineEdit(self)
+        address_input.setPlaceholderText("Введите адрес доставки")
+        address_input.setStyleSheet("font-size: 18px; margin-top: 10px; color: #fff;")
+        address_input.setMaximumWidth(500)
+        self.address_input = address_input
+        form_layout.addRow(address_input)
 
-        main_layout.addLayout(grid_layout)
+        order_button = QPushButton("Заказать", self)
+        order_button.clicked.connect(self.process_order)
+        order_button.setStyleSheet("font-size: 18px; margin-top: 20px;")
+        order_button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        form_layout.addRow(order_button)
 
-        order_button = QPushButton('Заказать', self)
-        order_button.clicked.connect(self.place_order)
-        main_layout.addWidget(order_button)
+        layout.addLayout(form_layout)
 
-        central_widget.setLayout(main_layout)
+        h_box_layout = QHBoxLayout()
+        h_box_layout.addStretch()
+        h_box_layout.addLayout(layout)
+        h_box_layout.addStretch()
+        h_box_layout.setAlignment(Qt.AlignmentFlag.AlignVCenter)
 
-    def place_order(self):
+        central_widget.setLayout(h_box_layout)
+
+    def process_order(self):
         fio = self.fio_input.text().strip()
         email = self.email_input.text().strip()
         address = self.address_input.text().strip()
@@ -62,4 +80,4 @@ class OrderWindow(QMainWindow):
         order_info = f'Адрес доставки: {address}\nНомер заказа: {self.product.id}'
         QMessageBox.information(self, 'Заказ оформлен', order_info)
 
-        self.close()
+        self.stacked_layout.setCurrentIndex(0)

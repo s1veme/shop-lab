@@ -1,7 +1,8 @@
 import requests
 from PyQt6.QtWidgets import (
     QMainWindow,
-    QStackedLayout, QVBoxLayout,
+    QStackedLayout,
+    QVBoxLayout,
     QLabel,
     QPushButton,
     QGridLayout,
@@ -42,23 +43,23 @@ class ProductDetailWindow(QMainWindow, BaseWindow):
         details_layout.addWidget(image_label, 0, 0, 2, 1)
 
         name_label = QLabel(product.title)
-        name_label.setStyleSheet("font-size: 20px; font-weight: bold;")
+        name_label.setStyleSheet('font-size: 20px; font-weight: bold;')
         details_layout.addWidget(name_label, 0, 1, Qt.AlignmentFlag.AlignTop)
 
-        price_label = QLabel(f"Цена: {product.price}")
-        price_label.setStyleSheet("font-size: 16px;")
+        price_label = QLabel(f'Цена: {product.price}')
+        price_label.setStyleSheet('font-size: 16px;')
         details_layout.addWidget(price_label, 1, 1, Qt.AlignmentFlag.AlignBottom)
 
-        buy_button = QPushButton("Купить")
-        buy_button.setStyleSheet("font-size: 14px;")
+        buy_button = QPushButton('Купить')
+        buy_button.setStyleSheet('font-size: 14px;')
         details_layout.addWidget(buy_button, 2, 1, Qt.AlignmentFlag.AlignTop)
 
         description_label = QLabel(product.description)
         details_layout.addWidget(description_label, 2, 0, 1, 1)
 
-        return_to_catalog_action = QAction("Вернуться в каталог", self)
+        return_to_catalog_action = QAction('Вернуться в каталог', self)
         return_to_catalog_action.triggered.connect(self.return_to_catalog)
-        toolbar = self.addToolBar("ReturnToCatalogToolbar")
+        toolbar = self.addToolBar('ReturnToCatalogToolbar')
         toolbar.addAction(return_to_catalog_action)
 
         main_layout.addLayout(details_layout)
