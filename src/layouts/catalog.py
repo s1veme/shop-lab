@@ -43,16 +43,18 @@ class ProductCard(QWidget):
         name_label = QLabel(product.title)
         name_label.setCursor(Qt.CursorShape.PointingHandCursor)
         name_label.mousePressEvent = on_clicked
+        name_label.setStyleSheet("font-size: 18px; font-weight: bold;")
         layout.addWidget(name_label)
 
         description = product.description
-        if len(product.description) > 100:
-            description = f'{product.description[:100]}...'
+        if len(product.description) > 20:
+            description = f'{product.description[:20]}...'
 
         description_label = QLabel(description)
         layout.addWidget(description_label)
 
-        price_label = QLabel(str(product.price))
+        price_label = QLabel(str(product.price) + '₽')
+        price_label.setStyleSheet("font-size: 16px; font-weight: bold;")
         layout.addWidget(price_label)
 
         image_label = QLabel()
@@ -60,6 +62,7 @@ class ProductCard(QWidget):
         image.loadFromData(httpx.get(product.image).content)
         image = image.scaled(300, 300, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
         image_label.setPixmap(image)
+        image_label.setStyleSheet("border-radius: 10px;")
         layout.addWidget(image_label)
 
         buy_button = QPushButton('Купить')
@@ -92,7 +95,7 @@ class ProductCatalogWindow(QMainWindow, BaseWindow):
     def init_ui(self):
         self.main_layout = QVBoxLayout()
 
-        self.main_layout.addLayout(self.init_header(self.logout))
+        self.addToolBar(self.init_header())
 
         self.scroll_area = QScrollArea()
         self.scroll_area_widget = QWidget()
@@ -141,7 +144,3 @@ class ProductCatalogWindow(QMainWindow, BaseWindow):
         detail_window = ProductDetailWindow(product, self.stacked_layout)
         self.stacked_layout.addWidget(detail_window)
         self.stacked_layout.setCurrentWidget(detail_window)
-
-    def logout(self):
-        # TODO: Добавить логику выхода из профиля.
-        pass

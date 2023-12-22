@@ -18,6 +18,7 @@ from PyQt6.QtWidgets import (
 from email_validator import EmailNotValidError, validate_email
 
 from core.settings import BASE_URL, HEIGHT, WIDTH
+from layouts.base import BaseWindow
 from models.order import Order
 from models.product import Product
 from models.user import ActiveUser
@@ -26,7 +27,7 @@ from utils.validatiors import ignore_none_values_and_empty_list
 logger = logging.getLogger(__name__)
 
 
-class OrderWindow(QMainWindow):
+class OrderWindow(QMainWindow, BaseWindow):
     def __init__(self, product: Product, stacked_layout: QVBoxLayout):
         super().__init__()
 
@@ -43,6 +44,8 @@ class OrderWindow(QMainWindow):
         self.setCentralWidget(central_widget)
 
         layout = QVBoxLayout()
+
+        self.addToolBar(self.init_header())
 
         form_layout = QFormLayout()
 

@@ -12,6 +12,7 @@ from PyQt6.QtGui import QPixmap, QAction
 from PyQt6.QtCore import Qt
 
 from core.settings import HEIGHT, WIDTH
+from layouts.order import OrderWindow
 from models.product import Product
 from layouts.base import BaseWindow
 
@@ -24,13 +25,14 @@ class ProductDetailWindow(QMainWindow, BaseWindow):
         self.setGeometry(100, 100, WIDTH, HEIGHT)
 
         self.stacked_layout = stacked_layout
+        self.product = product
 
         self.init_ui(product)
 
     def init_ui(self, product: Product):
         main_layout = QVBoxLayout()
 
-        main_layout.addLayout(self.init_header(self.return_to_catalog))
+        self.addToolBar(self.init_header())
 
         details_layout = QGridLayout()
 
@@ -52,15 +54,13 @@ class ProductDetailWindow(QMainWindow, BaseWindow):
 
         buy_button = QPushButton('Купить')
         buy_button.setStyleSheet('font-size: 14px;')
+        buy_button.clicked.connect(self.create_order)
+        buy_button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         details_layout.addWidget(buy_button, 2, 1, Qt.AlignmentFlag.AlignTop)
 
         description_label = QLabel(product.description)
+        description_label.setWordWrap(True)
         details_layout.addWidget(description_label, 2, 0, 1, 1)
-
-        return_to_catalog_action = QAction('Вернуться в каталог', self)
-        return_to_catalog_action.triggered.connect(self.return_to_catalog)
-        toolbar = self.addToolBar('ReturnToCatalogToolbar')
-        toolbar.addAction(return_to_catalog_action)
 
         main_layout.addLayout(details_layout)
 
@@ -70,5 +70,7 @@ class ProductDetailWindow(QMainWindow, BaseWindow):
         central_widget.setLayout(main_layout)
         self.setCentralWidget(central_widget)
 
-    def return_to_catalog(self):
-        self.stacked_layout.setCurrentIndex(1)
+    def create_order(self, event):
+        order_window = OrderWindow(self.product, self.stacked_layout)
+        self.stacked_layout.addWidget(order_window)
+        self.stacked_layout.setCurrentWidget(order_window)

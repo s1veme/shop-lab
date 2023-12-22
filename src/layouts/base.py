@@ -1,23 +1,46 @@
-from typing import Callable
+from PyQt6.QtGui import QAction
+from PyQt6.QtWidgets import (
+    QHBoxLayout,
+    QMessageBox,
+    QPushButton,
+    QSpacerItem,
+    QSizePolicy,
+    QStackedLayout,
+    QToolBar,
+    QWidget,
+)
 
-from PyQt6.QtWidgets import QHBoxLayout, QPushButton, QSpacerItem, QSizePolicy
+from models.user import ActiveUser
 
 
 class BaseWindow:
-    def init_header(self, logout_method: Callable) -> QHBoxLayout:
-        header_layout = QHBoxLayout()
+    stacked_layout: QStackedLayout
 
-        spacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
-        header_layout.addItem(spacer)
+    def init_header(self):
+        toolbar = QToolBar('Main Toolbar')
 
-        logout_button = QPushButton('Выход')
-        logout_button.clicked.connect(logout_method)
-        logout_button.setMaximumWidth(100)
-        header_layout.addWidget(logout_button)
+        spacer = QWidget()
+        spacer.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        toolbar.addWidget(spacer)
 
-        return header_layout
+        logout_action = toolbar.addAction('Выход')
+        logout_action.triggered.connect(self.logout)
+
+        return_to_catalog_action = toolbar.addAction('Вернуться в каталог')
+        return_to_catalog_action.triggered.connect(self.return_to_catalog)
+
+        return toolbar
 
     def init_footer(self) -> QHBoxLayout:
         footer_layout = QHBoxLayout()
 
         return footer_layout
+
+    def logout(self):
+        user = ActiveUser()
+        del user
+        self.stacked_layout.setCurrentIndex(0)
+        QMessageBox.information(self, 'Успешно!', 'Вы успешно вышли из аккаунта!')
+
+    def return_to_catalog(self):
+        self.stacked_layout.setCurrentIndex(1)

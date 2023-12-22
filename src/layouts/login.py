@@ -102,6 +102,9 @@ class LoginWindow(QWidget):
 
         ActiveUser(username=username, access_token=response['access'])
         QMessageBox.information(self, 'Вы успешно вошли!', 'Вы успешно вошли в свой аккаунт!')
+
+        self.username_input.setText('')
+        self.password_input.setText('')
         self.stacked_layout.setCurrentIndex(1)
 
     def register(self) -> None:
