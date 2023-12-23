@@ -16,3 +16,11 @@ class CreateUserSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance: User):
         return UserSerializer(instance).data
+
+    def create(self, validated_data):
+        user = User.objects.create_user(
+            username=validated_data['username'],
+            password=validated_data['password'],
+        )
+
+        return user
