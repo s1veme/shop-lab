@@ -4,8 +4,10 @@ from typing import Callable
 import httpx
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
+    QHBoxLayout,
+    QLineEdit,
     QMainWindow,
-    QStackedLayout,
+    QSizePolicy, QStackedLayout,
     QVBoxLayout,
     QLabel,
     QPushButton,
@@ -97,6 +99,22 @@ class ProductCatalogWindow(QMainWindow, BaseWindow):
 
         self.addToolBar(self.init_header())
 
+        spacer = QWidget()
+        spacer.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        search_layout = QHBoxLayout()
+        search_layout.addWidget(spacer)
+
+        search_input = QLineEdit()
+        search_input.setPlaceholderText("Поиск")
+        search_layout.addWidget(search_input)
+
+        search_button = QPushButton("Найти")
+        search_button.clicked.connect(self.search_products)
+        search_layout.addWidget(search_button)
+
+        self.main_layout.addLayout(search_layout)
+
         self.scroll_area = QScrollArea()
         self.scroll_area_widget = QWidget()
         self.catalog_layout = QGridLayout(self.scroll_area_widget)
@@ -104,7 +122,7 @@ class ProductCatalogWindow(QMainWindow, BaseWindow):
         self.catalog_layout.setVerticalSpacing(10)
         self.catalog_layout.setColumnMinimumWidth(0, 200)
 
-        self.populate_catalog()
+        self.populate_catalog(self.fetch_products())
 
         self.scroll_area.setWidget(self.scroll_area_widget)
         self.scroll_area.setWidgetResizable(True)
@@ -118,19 +136,26 @@ class ProductCatalogWindow(QMainWindow, BaseWindow):
         central_widget.setLayout(self.main_layout)
         self.setCentralWidget(central_widget)
 
-    def populate_catalog(self):
-        for i, product in enumerate(self.fetch_products()):
+    def populate_catalog(self, products: list[dict]):
+        for i in reversed(range(self.catalog_layout.count())):
+            item = self.catalog_layout.itemAt(i)
+            if item and item.widget():
+                item.widget().setParent(None)
+
+        for index, product in enumerate(products):
             card = Product(**product)
             product_card = ProductCard(
                 card,
                 lambda event: self.on_product_clicked(event, card),
                 self.stacked_layout,
             )
-            row, col = divmod(i, 4)
+            row, col = divmod(index, 4)
             self.catalog_layout.addWidget(product_card, row, col)
 
-    def fetch_products(self):
-        url = f'{BASE_URL}/api/v1/products'
+    def fetch_products(self, url: str | None = None):
+        if not url:
+            url = f'{BASE_URL}/api/v1/products'
+
         try:
             with httpx.Client(follow_redirects=True) as client:
                 response = client.get(url)
@@ -139,6 +164,16 @@ class ProductCatalogWindow(QMainWindow, BaseWindow):
         except httpx.RequestError as e:
             logger.error(f'Failed to fetch products. Error: {e}')
             return []
+
+    def search_products(self):
+        search_query = self.search_edit.text()
+        if search_query:
+            search_url = f'{BASE_URL}/api/v1/products/?search={search_query}'
+            search_results = self.fetch_products(url=search_url)
+            self.populate_catalog(products=search_results)
+            return
+
+        self.populate_catalog(products=self.fetch_products())
 
     def on_product_clicked(self, event, product):
         detail_window = ProductDetailWindow(product, self.stacked_layout)
