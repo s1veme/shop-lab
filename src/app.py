@@ -10,11 +10,14 @@ from qt_material import apply_stylesheet
 from core.settings import BASE_URL, HEIGHT, WIDTH, WORK_DIR
 from layouts.catalog import ProductCatalogWindow
 from layouts.login import LoginWindow
+from services.api import APIService
 
 logger = logging.getLogger(__name__)
 
 
 def main():
+    APIService(BASE_URL)
+
     with httpx.Client(follow_redirects=True) as client:
         response = client.get(f'{BASE_URL}/api/common/health')
         if response.status_code != http.HTTPStatus.OK:
@@ -24,7 +27,7 @@ def main():
     app = QApplication(sys.argv)
     app.setWindowIcon(QIcon(str(WORK_DIR / 'assets/logo.png')))
 
-    apply_stylesheet(app, theme='dark_blue.xml')
+    apply_stylesheet(app, theme='dark_amber.xml')
 
     stacked_layout = QStackedLayout()
 

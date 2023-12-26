@@ -7,7 +7,8 @@ from PyQt6.QtWidgets import (
     QHBoxLayout,
     QLineEdit,
     QMainWindow,
-    QSizePolicy, QStackedLayout,
+    QSizePolicy,
+    QStackedLayout,
     QVBoxLayout,
     QLabel,
     QPushButton,
@@ -106,10 +107,11 @@ class ProductCatalogWindow(QMainWindow, BaseWindow):
         search_layout.addWidget(spacer)
 
         search_input = QLineEdit()
-        search_input.setPlaceholderText("Поиск")
+        self.search_input = search_input
+        search_input.setPlaceholderText('Поиск')
         search_layout.addWidget(search_input)
 
-        search_button = QPushButton("Найти")
+        search_button = QPushButton('Найти')
         search_button.clicked.connect(self.search_products)
         search_layout.addWidget(search_button)
 
@@ -166,7 +168,7 @@ class ProductCatalogWindow(QMainWindow, BaseWindow):
             return []
 
     def search_products(self):
-        search_query = self.search_edit.text()
+        search_query = self.search_input.text()
         if search_query:
             search_url = f'{BASE_URL}/api/v1/products/?search={search_query}'
             search_results = self.fetch_products(url=search_url)

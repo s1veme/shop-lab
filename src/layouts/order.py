@@ -101,7 +101,7 @@ class OrderWindow(QMainWindow, BaseWindow):
             QMessageBox.critical(self, 'Ошибка', 'Введите корректный адрес электронной почты!')
             return
 
-        order_info = f'Адрес доставки: {address}\nНомер заказа: {self.product.id}'
+        order_info = f'Адрес доставки: {address}'
         self.create_order(
             Order(
                 full_name=fio,
